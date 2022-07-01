@@ -15,6 +15,7 @@ export default function Home() {
       const response = await client.query(RECOMMENDED_PROFILES).toPromise();
       console.log({ response });
       setProfiles(response.data.recommendedProfiles);
+      console.log("PROFILES", profiles);
     } catch (err) {
       console.log(err);
     }
@@ -25,7 +26,7 @@ export default function Home() {
     <div className={styles.container}>
       <h1>CALOBARY</h1>
       {profiles.map((profile, index) => (
-        <Link key={index} href={`/profile/${profile.handle}`}>
+        <Link key={index} href={`/profile/${profile.id}`}>
           <a>
             <div className={styles.card}>
               {profile.picture ? (
