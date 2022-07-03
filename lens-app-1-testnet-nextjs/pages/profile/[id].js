@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { client, GET_PROFILE, GET_PUBLICATIONS } from "../../api";
 import styles from "../../styles/Home.module.css";
 import Image from "next/image";
+import moment from "moment";
 
 export default function Handle() {
   const router = useRouter();
@@ -10,6 +11,7 @@ export default function Handle() {
   const id = query.id;
   const [profile, setProfile] = useState({});
   const [publications, setPublications] = useState([]);
+  let date = new Date();
 
   useEffect(() => {
     if (id) {
@@ -53,7 +55,17 @@ export default function Handle() {
       <p>{profile.bio}</p>
       <h2>Publications:</h2>
       {publications.map((publication, index) => (
-        <div key={index}>{publication.metadata.content}</div>
+        <div key={index} className={styles.card}>
+          <h4>Publication n° {index + 1} :</h4>
+          <p style={{ color: "green", fontSize: "150%" }}>
+            {publication.metadata.content}
+          </p>
+          <h6>
+            {moment(publication.createdAt).format(
+              "dddd, MMMM Do YYYY, h:mm:ss a"
+            )}
+          </h6>
+        </div>
       ))}
     </div>
   );
