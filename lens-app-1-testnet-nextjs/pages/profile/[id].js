@@ -4,6 +4,7 @@ import { client, GET_PROFILE, GET_PUBLICATIONS } from "../../api";
 import styles from "../../styles/Home.module.css";
 import Image from "next/image";
 import moment from "moment";
+import { isOlderThan24H } from "../../utils/moment.tsx";
 
 export default function Handle() {
   const router = useRouter();
@@ -61,9 +62,13 @@ export default function Handle() {
             {publication.metadata.content}
           </p>
           <h6>
-            {moment(publication.createdAt).format(
-              "dddd, MMMM Do YYYY, h:mm:ss a"
+            {isOlderThan24H(publication.createdAt) ? (
+              <div>YEEEH</div>
+            ) : (
+              <div>NOOO</div>
             )}
+            {moment(publication.createdAt).format("dddd, MMMM Do ,")}
+            {moment(publication.createdAt).fromNow()}
           </h6>
         </div>
       ))}
