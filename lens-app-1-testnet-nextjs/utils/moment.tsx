@@ -1,8 +1,22 @@
 import moment from "moment";
 
-export function isOlderThan24H(date) {
+function isOlderThan24H(date) {
   const now = moment();
-  const createdAt = moment(date).format("dddd, MMMM Do h:mm:ss a,");
-  console.log("AGE", now.diff(date, "days"));
   return now.diff(date, "days") > 1;
+}
+
+function displayAge(date) {
+  return moment(date).fromNow();
+}
+
+function displayDate(date) {
+  return moment(date).format("dddd, MMMM Do ");
+}
+
+export function timestamp(date) {
+  if (isOlderThan24H(date)) {
+    return displayDate(date);
+  } else {
+    return displayAge(date);
+  }
 }

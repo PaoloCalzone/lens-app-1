@@ -4,7 +4,7 @@ import { client, GET_PROFILE, GET_PUBLICATIONS } from "../../api";
 import styles from "../../styles/Home.module.css";
 import Image from "next/image";
 import moment from "moment";
-import { isOlderThan24H } from "../../utils/moment.tsx";
+import { timestamp } from "../../utils/moment.tsx";
 
 export default function Handle() {
   const router = useRouter();
@@ -57,19 +57,15 @@ export default function Handle() {
       <h2>Publications:</h2>
       {publications.map((publication, index) => (
         <div key={index} className={styles.card}>
-          <h4>Publication n° {index + 1} :</h4>
+          <h6>
+            <div>
+              <strong>{profile.name}</strong> @{profile.handle} -{" "}
+              {timestamp(publication.createdAt)}
+            </div>
+          </h6>
           <p style={{ color: "green", fontSize: "150%" }}>
             {publication.metadata.content}
           </p>
-          <h6>
-            {isOlderThan24H(publication.createdAt) ? (
-              <div>YEEEH</div>
-            ) : (
-              <div>NOOO</div>
-            )}
-            {moment(publication.createdAt).format("dddd, MMMM Do ,")}
-            {moment(publication.createdAt).fromNow()}
-          </h6>
         </div>
       ))}
     </div>
