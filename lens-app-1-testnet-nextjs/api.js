@@ -1,7 +1,7 @@
 import { createClient } from "urql";
 
 const API_URL = "https://api-mumbai.lens.dev";
-export const client = createClient({
+export const urqlClient = createClient({
   url: API_URL,
 });
 

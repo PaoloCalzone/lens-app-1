@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { client, GET_PROFILE, GET_PUBLICATIONS } from "../../api";
+import { urqlClient, GET_PROFILE, GET_PUBLICATIONS } from "../../api";
 import styles from "../../styles/Home.module.css";
 import Image from "next/image";
 import moment from "moment";
@@ -20,8 +20,9 @@ export default function Handle() {
       fetchPublications();
     }
   }, [id]);
-  console.log("ID", id);
+
   async function fetchProfile() {
+    const client = urqlClient;
     const response = await client
       .query(GET_PROFILE, { request: { profileId: id } })
       .toPromise();
@@ -29,16 +30,16 @@ export default function Handle() {
   }
 
   async function fetchPublications() {
+    const client = urqlClient;
     const response = await client
       .query(GET_PUBLICATIONS, {
         id,
       })
       .toPromise();
-    console.log(response.data.publications);
+    //console.log(response.data.publications);
     setPublications(response.data.publications.items);
   }
 
-  console.log("Publications2", publications);
   return (
     <div className={styles.container}>
       <h1>{profile.handle}</h1>

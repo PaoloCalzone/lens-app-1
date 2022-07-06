@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import styles from "../styles/Home.module.css";
-import { client, RECOMMENDED_PROFILES } from "../api";
+import { urqlClient, RECOMMENDED_PROFILES } from "../api";
 import { useState, useEffect } from "react";
 
 export default function Home() {
@@ -12,6 +12,7 @@ export default function Home() {
 
   async function fetchProfiles() {
     try {
+      const client = urqlClient;
       const response = await client.query(RECOMMENDED_PROFILES).toPromise();
       console.log({ response });
       setProfiles(response.data.recommendedProfiles);
