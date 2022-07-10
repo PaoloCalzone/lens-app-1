@@ -1,21 +1,36 @@
 import Image from "next/image";
 import Link from "next/link";
 import styles from "../styles/Home.module.css";
-import { client, RECOMMENDED_PROFILES } from "../api";
+import { urqlClient, RECOMMENDED_PROFILES } from "../api";
 import { useState, useEffect } from "react";
+import { ethers } from "ethers";
 
 export default function Home() {
   const [profiles, setProfiles] = useState([]);
   useEffect(() => {
+    console.log("window.ethereum", window.ethereum);
+    async function ethereumConnection() {
+      if (typeof window.ethereum === "undefined") {
+        console.log("Connect your wallet");
+      } else {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const accounts = await provider.send("eth_requestAccounts", []);
+        const addresses = await provider.listAccounts();
+        console.log("listAccounts", addresses);
+        const account = accounts[0];
+        console.log("Accounts", accounts);
+        console.log("Actual account", account);
+      }
+    }
+    ethereumConnection();
     fetchProfiles();
   }, []);
 
   async function fetchProfiles() {
     try {
+      const client = urqlClient;
       const response = await client.query(RECOMMENDED_PROFILES).toPromise();
-      console.log({ response });
       setProfiles(response.data.recommendedProfiles);
-      console.log("PROFILES", profiles);
     } catch (err) {
       console.log(err);
     }
