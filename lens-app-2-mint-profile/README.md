@@ -44,7 +44,26 @@ const signer = provider.getSigner();
 - Don't let the user click on the connect button before the page is fully loaded
 - Force [page refreshes on network changes](https://docs.ethers.io/v5/concepts/best-practices/#best-practices--network-changes)
 
-## 2. let the user mint his profile on testnet with the graphql api
+## 2. let the user authenticate (login)
+
+In order to create a profile...
+The HTTP Authorization request header can be used to provide credentials that authenticate a user agent with a server, allowing access to a protected resource, in this case, an access token to mint a new Profile.
+
+```js
+const client = createClient({
+  url: "https://api-mumbai.lens.dev",
+  // add token to header if present
+  fetchOptions: () => {
+    const token = getToken();
+    return token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+  },
+});
+```
+
+1. generate a challenge from the server (= request)
+2. sign that challenge with your Ethereum wallet and send the signature to lens server to generate a valid JWT `accessToken`, and `refreshToken` (= mutation)
+
+## 3. let the user mint his profile on testnet with the graphql api
 
 ```graphql
 mutation CreateProfile {

@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { urqlClient, GET_PROFILE, GET_PUBLICATIONS } from "../../api";
 import styles from "../../styles/Home.module.css";
 import Image from "next/image";
-import moment from "moment";
 import { timestamp } from "../../utils/moment.tsx";
 
 export default function Handle() {

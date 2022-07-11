@@ -1,10 +1,3 @@
-import { createClient } from "urql";
-
-const API_URL = "https://api-mumbai.lens.dev";
-export const urqlClient = createClient({
-  url: API_URL,
-});
-
 export const GET_PUBLICATIONS = `
 query Publications($id: ProfileId!) {
   publications(request: {
