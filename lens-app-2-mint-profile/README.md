@@ -61,7 +61,59 @@ const client = createClient({
 ```
 
 1. generate a challenge from the server (= request)
-2. sign that challenge with your Ethereum wallet and send the signature to lens server to generate a valid JWT `accessToken`, and `refreshToken` (= mutation)
+2. sign that challenge with your Ethereum wallet and send the signature to the lens server to generate a [valid JWT](https://jwt.io/introduction) `accessToken`, and `refreshToken` (= mutation)
+
+### JSON Web Token structure
+
+JSON Web Tokens consist of three parts separated by dots (.), which are:
+
+- Header (2 parts: the type of token and the signing algorithm, eg. HS256) -> is Base64URL encoded
+- Payload (contains the claims. Some items: iss(issuer), exp(expiration time),...) -> is base64URL encoded
+- Signature -> `algorithm(header + payload + secret)`
+
+Therefore, a JWT typically looks like the following.
+
+`xxxxx.yyyyy.zzzzz`
+
+## Store refresh token in local storage
+
+> However, we can reduce the absolute token expiration time of tokens to reduce the security risks of storing tokens in local storage. This reduces the impact of a reflected XSS attack (but not of a persistent one). A refresh token may have a long lifespan by configuration. However, the defined long lifespan of a refresh token is cut short with refresh token rotation. The refresh is only valid within the lifespan of the access token, which would be short-lived. (in [auth0.com blog](https://auth0.com/blog/refresh-tokens-what-are-they-and-when-to-use-them/))
+
+The `accessToken` expires after 30 minutes. So the basic idea to keep
+the user experience as smooth as possible without compromising security
+is to refresh the token every time the user calls a query or a mutation.
+You can do that by implementing a `refreshAuthToken()` function in your
+`createClient()` one that gets called for every interaction with the
+Lens API.
+
+```js
+export async function createClient() {
+  const storageData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  // If there is a token in localStorage
+  if (storageData) {
+    try {
+      // refresh token with a mutation on lens API and
+      // retrieve the new accessToken
+      const { accessToken } = await refreshAuthToken();
+      // Pass that accessToken in the HTTP header
+      const urqlClient = new createUrqlClient({
+        url: APIURL,
+        fetchOptions: {
+          headers: {
+            "x-access-token": `Bearer ${accessToken}`,
+          },
+        },
+      });
+      return urqlClient;
+    } catch (err) {
+      return basicClient;
+    }
+  } else {
+    // otherwise, the user is not logged in.
+    return basicClient;
+  }
+}
+```
 
 ## 3. let the user mint his profile on testnet with the graphql api
 
