@@ -21,15 +21,17 @@ export default function Handle() {
   }, [id]);
   console.log("ID", id);
   async function fetchProfile() {
-    const client = urqlClient;
+    const client = await urqlClient();
     const response = await client
-      .query(GET_PROFILE, { request: { profileId: id } })
+      .query(GET_PROFILE, {
+        request: { profileId: id },
+      })
       .toPromise();
     setProfile(response.data.profile);
   }
 
   async function fetchPublications() {
-    const client = urqlClient;
+    const client = await urqlClient();
     const response = await client
       .query(GET_PUBLICATIONS, {
         id,

@@ -9,7 +9,9 @@ const AUTHENTICATION = `
  }
 `;
 
-export const authenticate = (address, signature) => {
-  const client = urqlClient;
-  return client.mutation(AUTHENTICATION, { request: { address, signature } });
+export const authenticate = async (address, signature) => {
+  const client = await urqlClient();
+  return client
+    .mutation(AUTHENTICATION, { request: { address, signature } })
+    .toPromise();
 };

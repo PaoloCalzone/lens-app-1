@@ -6,7 +6,10 @@ const GET_CHALLENGE = `
   }
 `;
 
-export const generateChallenge = (address) => {
-  const client = urqlClient;
-  return client.query(GET_CHALLENGE, { request: { address: address } });
-};
+export async function generateChallenge(address) {
+  const client = await urqlClient();
+
+  return client
+    .query(GET_CHALLENGE, { request: { address: address } })
+    .toPromise();
+}

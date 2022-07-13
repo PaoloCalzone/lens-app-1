@@ -12,7 +12,7 @@ export default function Home() {
 
   async function fetchProfiles() {
     try {
-      const client = urqlClient;
+      const client = await urqlClient();
       const response = await client.query(RECOMMENDED_PROFILES).toPromise();
       setProfiles(response.data.recommendedProfiles);
     } catch (err) {
