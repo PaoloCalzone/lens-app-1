@@ -15,11 +15,10 @@ function MyApp({ Component, pageProps }) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const accounts = await provider.send("eth_requestAccounts", []);
         const addresses = await provider.listAccounts();
-        console.log("listAccounts", addresses);
+        // console.log("listAccounts", addresses);
         const account = accounts[0];
         setUserAccount(account);
-        console.log("Accounts", accounts);
-        console.log("Actual account", account);
+        // console.log("Accounts", accounts);
         login(account);
       }
     }
