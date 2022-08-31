@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { urqlClient, GET_PROFILE, GET_PUBLICATIONS } from "../../api";
-import styles from "../../styles/Home.module.css";
+
 import Image from "next/image";
 import { timestamp } from "../../utils/moment.tsx";
 
@@ -43,7 +43,7 @@ export default function Handle() {
 
   console.log("Publications2", publications);
   return (
-    <div className={styles.container}>
+    <div >
       <h1>{profile.handle}</h1>
       {profile.coverPicture ? (
         <Image
@@ -59,7 +59,7 @@ export default function Handle() {
       <p>{profile.bio}</p>
       <h2>Publications:</h2>
       {publications.map((publication, index) => (
-        <div key={index} className={styles.card}>
+        <div key={index} >
           <h6>
             <div>
               <strong>{profile.name}</strong> @{profile.handle} -{" "}

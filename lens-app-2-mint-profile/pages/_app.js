@@ -2,7 +2,7 @@ import "../styles/globals.css";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import Navbar from "../components/Navbar";
-import { login } from "../api/login-user";
+import { login } from "../api";
 
 function MyApp({ Component, pageProps }) {
   const [userAccount, setUserAccount] = useState();

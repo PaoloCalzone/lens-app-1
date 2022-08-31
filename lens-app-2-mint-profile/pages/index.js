@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import styles from "../styles/Home.module.css";
 import { urqlClient, RECOMMENDED_PROFILES } from "../api";
 import { useState, useEffect } from "react";
 
@@ -22,11 +21,11 @@ export default function Home() {
 
   console.log("profiles are:", profiles);
   return (
-    <div className={styles.container}>
+    <div >
       {profiles.map((profile, index) => (
         <Link key={index} href={`/profile/${profile.id}`}>
           <a>
-            <div className={styles.card}>
+            <div >
               {profile.picture ? (
                 <Image
                   src={profile.picture.original.url}
