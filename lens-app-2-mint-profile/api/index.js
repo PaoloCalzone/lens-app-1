@@ -38,4 +38,4 @@ export {
   RECOMMENDED_PROFILES,
 } from "./requests";
 export { CREATE_PROFILE } from "./mutations";
-export { login } from "./login-user";
+export { login } from "./login/login-user";

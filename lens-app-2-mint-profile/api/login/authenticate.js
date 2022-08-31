@@ -1,4 +1,4 @@
-import { urqlClient } from ".";
+import { urqlClient } from "..";
 
 const AUTHENTICATION = `
   mutation($request: SignedAuthChallenge!) { 

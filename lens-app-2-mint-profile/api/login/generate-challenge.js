@@ -1,4 +1,4 @@
-import { urqlClient } from ".";
+import { urqlClient } from "..";
 
 const GET_CHALLENGE = `
   query($request: ChallengeRequest!) {
