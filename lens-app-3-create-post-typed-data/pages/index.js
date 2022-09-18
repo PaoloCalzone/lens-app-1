@@ -66,7 +66,7 @@ export default function Home() {
             </button>
           </div>
           <h1 className="text-lg my-8">
-            <span className="text-2xl">2.</span> Choose a funky handle!
+            <span className="text-2xl">2.</span> Write something memorable!
           </h1>
           <div className="my-16 space-y-12">
             <form
@@ -79,11 +79,8 @@ export default function Home() {
                     htmlFor="handle"
                     className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                   >
-                    Handle
-                    <p className="mt-1 max-w-2xl text-sm text-gray-400">
-                      Your handle will receive the `.test` extension on lens
-                      testnet. Min. 5 characters, max 30.
-                    </p>
+                    Post:
+                    
                   </label>
                   <div className="mt-1 sm:mt-0 sm:col-span-2">
                     <input
@@ -93,25 +90,12 @@ export default function Home() {
                       className="block max-w-lg w-full shadow-sm focus:ring-emerald-700 focus:border-emerald-700 sm:text-sm border border-gray-300 rounded-md"
                       required
                       value={handle}
-                      onChange={(e) => setHandle(e.target.value)}
+                      onChange={(e) => setPost(e.target.value)}
                       disabled={!account}
                     />
                   </div>
                 </div>
-
-                <div className="pt-5">
-                  <div className="flex justify-end">
-                    <button
-                      type="submit"
-                      className="flex   ml-3 w-40 py-2 px-8  border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      disabled={loading}
-                    >
-                      {loading ? <Spinner /> : ""}
-                      <span className="flex-1">Create </span>
-                    </button>
-                  </div>
-                </div>
-              </div>
+</div>
             </form>
             <h1 className="text-lg my-8">
               <span className="text-2xl">3.</span>{" "}

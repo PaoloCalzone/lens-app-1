@@ -8,7 +8,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link href="/">
               <span className="text-lg text-emerald-600 font-medium">
-                🌱 Lens do it!
+                🌱 Post on Lens!
               </span>
             </Link>
           </div>
