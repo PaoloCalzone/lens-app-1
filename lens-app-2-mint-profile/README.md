@@ -1,4 +1,4 @@
-# 2. lens-app-2-mint-profile
+# 2. Create a profile
 
 Second iteration with the lens protocol on a nextjs app.
 
@@ -37,7 +37,7 @@ const signer = provider.getSigner();
 
 - [ethers Provider API](https://docs.ethers.io/v5/getting-started/)
 - [metamask ethereum provider API](https://docs.metamask.io/guide/ethereum-provider.html)
-- [Metamasl onboarding library](https://docs.metamask.io/guide/onboarding-library.html#getting-started) for a first smooth UX.
+
 
 ### User's account interactions best practices
 

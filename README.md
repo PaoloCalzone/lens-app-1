@@ -14,21 +14,9 @@ you to implement some extra features such as authentication.
 ## 1. lens-app-1-testnet-nextjs
 
 First iteration with the lens protocol on a nextjs app. Interaction with
-the contracts on the Mumbai testnet, with the mocked whitelisted address
-for Profile creations.
+the contracts on the Mumbai testnet.
+## 2. lens-app-2-create-profile
 
-## 2. lens-app-2-mint-profile
+Implement the authentication logic in order to let the user create a profile.
 
-Second iteration with the lens protocol on a nextjs app.
-
-- mint a profile on testnet
-
-## 3. lens-app-3-follow
-
-## 4. lens-app-4-collect
-
-## 5. lens-app-5-mirror
-
-## 6. lens-app-6-comment
-
-## 7. lens-app-7-publish
+## 3. lens-app-3-create-post-typed-data
