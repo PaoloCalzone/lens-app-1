@@ -19,12 +19,4 @@ the contracts on the Mumbai testnet.
 
 Implement the authentication logic in order to let the user create a profile.
 
-## 3. lens-app-3-follow
-
-## 4. lens-app-4-collect
-
-## 5. lens-app-5-mirror
-
-## 6. lens-app-6-comment
-
-## 7. lens-app-7-publish
+## 3. lens-app-3-create-post-typed-data
