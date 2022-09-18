@@ -1,4 +1,4 @@
-# 2. lens-app-2-mint-profile
+# 2. Create a profile
 
 Second iteration with the lens protocol on a nextjs app.
 
