@@ -17,7 +17,7 @@ First iteration with the lens protocol on a nextjs app. Interaction with
 the contracts on the Mumbai testnet, with the mocked whitelisted address
 for Profile creations.
 
-## 2. lens-app-2-mint-profile
+## 2. lens-app-2-create-profile
 
 Second iteration with the lens protocol on a nextjs app.
 
