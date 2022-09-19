@@ -1,49 +1,31 @@
-import { useState } from "react";
-import { CREATE_PROFILE } from "../api";
-import { gql, useMutation } from "@apollo/client";
-import { login } from "../api/login";
+import { useEffect, useState } from "react";
+import { login, GET_PROFILES } from "../api";
+import { gql, useQuery } from "@apollo/client";
 import Layout from "../components/Layout";
 import HeroSection from "../components/HeroSection";
-import Profiles from "../components/Profiles";
 import Spinner from "../components/Spinner";
 import Seo from "../utils/Seo";
+import Post from "../components/Post";
+import { apolloClient } from "../apollo-client";
 
 export default function Home() {
   const [account, setAccount] = useState(null);
-  const [handle, setHandle] = useState("");
+  const [profile, setProfile] = useState(null);
+  const [post, setPost] = useState("");
   const [txHash, settxHash] = useState(null);
 
-  async function connectWallet() {
+  async function lensLogin() {
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
-    login(accounts[0]);
-    setAccount(accounts[0]);
-  }
-
-  const [createProfile, { data, loading, error }] = useMutation(
-    gql(CREATE_PROFILE)
-  );
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-
-    const response = await createProfile({
-      variables: {
-        request: {
-          handle: handle,
-        },
-      },
+    const data = await login(accounts[0]);
+    if (data.authenticate.accessToken) setAccount(accounts[0]);
+    console.log("Address", accounts[0]);
+    const response = await apolloClient.query({
+      query: gql(GET_PROFILES),
+      variables: { request: { ownedBy: accounts[0] } },
     });
-
-    if (response.error)
-      alert(`Oooops, something went wrong: ${response.error}`);
-    if (response.data && response.data.createProfile.reason == "HANDLE_TAKEN") {
-      alert("HANDLE ALREADY TAKEN. TRY ANOTHER ONE");
-    }
-    if (response.data.createProfile.txHash) {
-      settxHash(response.data.createProfile.txHash);
-    }
+    setProfile(response.data.profiles.items[0].id);
   }
 
   return (
@@ -60,49 +42,26 @@ export default function Home() {
           <div className="flex justify-end">
             <button
               className="bg-emerald-600 w-40 py-2 px-4 text-center border border-gray-300 rounded-full shadow-sm text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-700"
-              onClick={() => connectWallet()}
+              onClick={() => lensLogin()}
             >
-              Connect Wallet
+              Login
             </button>
           </div>
-          <h1 className="text-lg my-8">
-            <span className="text-2xl">2.</span> Write something memorable!
-          </h1>
-          <div className="my-16 space-y-12">
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-8 divide-y divide-gray-200"
-            >
-              <div className="space-y-6 sm:space-y-5">
-                <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
-                  <label
-                    htmlFor="handle"
-                    className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                  >
-                    Post:
-                    
-                  </label>
-                  <div className="mt-1 sm:mt-0 sm:col-span-2">
-                    <input
-                      id="event-name"
-                      name="event-name"
-                      type="text"
-                      className="block max-w-lg w-full shadow-sm focus:ring-emerald-700 focus:border-emerald-700 sm:text-sm border border-gray-300 rounded-md"
-                      required
-                      value={handle}
-                      onChange={(e) => setPost(e.target.value)}
-                      disabled={!account}
-                    />
-                  </div>
-                </div>
-</div>
-            </form>
-            <h1 className="text-lg my-8">
-              <span className="text-2xl">3.</span>{" "}
-              {txHash ? "Congrats! See what happened:" : "Curious?"}
-            </h1>
-          </div>
-          <Profiles account={account} txHash={txHash} />
+          {account && (
+            <div>
+              <h1 className="text-lg my-8">
+                <span className="text-2xl">2.</span> Write something memorable!
+              </h1>
+              <div className="my-16 space-y-12">
+                <Post account={account} />
+
+                <h1 className="text-lg my-8">
+                  <span className="text-2xl">3.</span>{" "}
+                  {txHash ? "Congrats! See what happened:" : "Curious?"}
+                </h1>
+              </div>
+            </div>
+          )}
         </section>
       </div>
     </Layout>

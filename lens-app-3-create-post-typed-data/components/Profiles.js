@@ -2,7 +2,7 @@ import { gql, useQuery } from "@apollo/client";
 import { GET_PROFILES } from "../api";
 import ProfileCard from "./ProfileCard";
 
-export default function Profile({ account, txHash }) {
+export default function Profile({ account }) {
   const { loading, error, data, refetch } = useQuery(gql(GET_PROFILES), {
     variables: {
       request: { ownedBy: account },
