@@ -6,9 +6,7 @@ import { apolloClient } from "../apollo-client";
 
 export default function Post({ profile }) {
   const [post, setPost] = useState("");
-  const [createPost, { data, loading, error }] = useMutation(
-    gql(CREATE_POST_TYPED_DATA)
-  );
+
   console.log("PROFILE from post", profile);
 
   async function handleSubmit(e) {
@@ -56,19 +54,6 @@ export default function Post({ profile }) {
         console.log("contentURI", contentURI);
         console.log("Response JSON", responseJSON);
         console.log("profile", profile.id);
-
-        await createPost({
-          variables: {
-            request: {
-              profileId: profile.id,
-              contentURI: contentURI,
-              collectModule: { freeCollectModule: { followerOnly: false } },
-              referenceModule: { followerOnlyReferenceModule: false },
-            },
-          },
-        });
-        console.log("DATA transaction", data);
-        console.log("MUTATION ERROR", error);
       }
     } catch (err) {
       console.log("Error while uploading to ipfs", err);
