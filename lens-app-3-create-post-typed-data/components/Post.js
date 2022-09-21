@@ -1,45 +1,83 @@
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { gql, useMutation } from "@apollo/client";
 import { CREATE_POST_TYPED_DATA } from "../api";
+import { apolloClient } from "../apollo-client";
 
-export default function Post({ account }) {
+export default function Post({ profile }) {
   const [post, setPost] = useState("");
   const [createPost, { data, loading, error }] = useMutation(
     gql(CREATE_POST_TYPED_DATA)
   );
+  console.log("PROFILE from post", profile);
+
   async function handleSubmit(e) {
     e.preventDefault();
 
-    console.log("Post", post);
-    if (account) {
-      const {
-        data: profileData,
-        loading: profileLoading,
-        error: profileError,
-      } = useQuery(gql(GET_PROFILE), {
-        variables: { request: { ownedBy: account } },
-      });
+    if (!profile) {
+      console.log("No profile detected...");
     }
-    const response = await createPost({
-      variables: {
-        request: {
-          handle: handle,
-        },
-      },
-    });
 
-    if (response.error)
-      alert(`Oooops, something went wrong: ${response.error}`);
-    if (response.data && response.data.createProfile.reason == "HANDLE_TAKEN") {
-      alert("HANDLE ALREADY TAKEN. TRY ANOTHER ONE");
-    }
-    if (response.data.createProfile.txHash) {
-      settxHash(response.data.createProfile.txHash);
+    const body = {
+      version: "2.0.0",
+      metadata_id: uuidv4(),
+      description: "TEXT9",
+      content: "TEXT9",
+      locale: "en",
+      mainContentFocus: "TEXT_ONLY",
+      external_url: null,
+      name: "Name8",
+      attributes: [],
+      image: null,
+      imageMimeType: null,
+      media: [
+        // {
+        //   item: 'https://scx2.b-cdn.net/gfx/news/hires/2018/lion.jpg',
+        //   // item: 'https://assets-global.website-files.com/5c38aa850637d1e7198ea850/5f4e173f16b537984687e39e_AAVE%20ARTICLE%20website%20main%201600x800.png',
+        //   type: 'image/jpeg',
+        // },
+      ],
+      appId: "lens-private-comment",
+    };
+    try {
+      const response = await fetch("/api/store-data", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (response.status !== 200) {
+        alert("Ooops! Something went wrong. Please refresh and try again.");
+      } else {
+        console.log("Form successfully submitted!", response);
+        let responseJSON = await response.json();
+        console.log("Response JSON e");
+        const contentURI = `https://infura-ipfs.io/ipfs/${responseJSON.cid}`;
+        console.log("contentURI", contentURI);
+        console.log("Response JSON", responseJSON);
+        console.log("profile", profile.id);
+
+        await createPost({
+          variables: {
+            request: {
+              profileId: profile.id,
+              contentURI: contentURI,
+              collectModule: { freeCollectModule: { followerOnly: false } },
+              referenceModule: { followerOnlyReferenceModule: false },
+            },
+          },
+        });
+        console.log("DATA transaction", data);
+        console.log("MUTATION ERROR", error);
+      }
+    } catch (err) {
+      console.log("Error while uploading to ipfs", err);
     }
   }
+
   return (
     <div>
-      {account ? (
+      {profile ? (
         <form
           onSubmit={handleSubmit}
           className="space-y-8 divide-y divide-gray-200"
@@ -55,7 +93,7 @@ export default function Post({ account }) {
                   required
                   value={post}
                   onChange={(e) => setPost(e.target.value)}
-                  disabled={!account}
+                  /* disabled={!account} */
                 />
               </div>
             </div>

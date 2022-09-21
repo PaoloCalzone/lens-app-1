@@ -9,12 +9,16 @@ import Post from "../components/Post";
 import { apolloClient } from "../apollo-client";
 
 export default function Home() {
+  const [network, setNetwork] = useState(null);
   const [account, setAccount] = useState(null);
   const [profile, setProfile] = useState(null);
   const [post, setPost] = useState("");
   const [txHash, settxHash] = useState(null);
 
   async function lensLogin() {
+    const networkVersion = await window.ethereum.networkVersion;
+    setNetwork(networkVersion);
+
     const accounts = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
@@ -25,8 +29,13 @@ export default function Home() {
       query: gql(GET_PROFILES),
       variables: { request: { ownedBy: accounts[0] } },
     });
-    setProfile(response.data.profiles.items[0].id);
+    setProfile({
+      id: response.data.profiles.items[0].id,
+      handle: response.data.profiles.items[0].handle,
+    });
+    console.log("profile object", profile);
   }
+  console.log("Nerwork", network);
 
   return (
     <Layout>
@@ -34,26 +43,47 @@ export default function Home() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <HeroSection />
         <section className="relative py-12">
-          <h1 className="text-lg my-8">
-            <span className="text-2xl">1.</span> Connect your wallet, select{" "}
-            <strong>Polygon Mumbai</strong> network and <strong>sign</strong>{" "}
-            the transaction to be logged in.
-          </h1>
-          <div className="flex justify-end">
-            <button
-              className="bg-emerald-600 w-40 py-2 px-4 text-center border border-gray-300 rounded-full shadow-sm text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-700"
-              onClick={() => lensLogin()}
-            >
-              Login
-            </button>
-          </div>
-          {account && (
+          {profile ? (
+            <div>
+              <p>
+                Network:{" "}
+                {network === "80001" ? (
+                  "mumbai polygon"
+                ) : (
+                  <span className="text-red-500">
+                    please switch to mumbai polygon
+                  </span>
+                )}{" "}
+              </p>
+              <p>Address: {account}</p>
+              <p>
+                Lens profile: <strong>{profile.handle}</strong>
+              </p>
+            </div>
+          ) : (
+            <div>
+              <h1 className="text-lg my-8">
+                <span className="text-2xl">1.</span> Connect your wallet, select{" "}
+                <strong>Polygon Mumbai</strong> network and{" "}
+                <strong>sign</strong> the transaction to be logged in.
+              </h1>
+              <div className="flex justify-end">
+                <button
+                  className="bg-emerald-600 w-40 py-2 px-4 text-center border border-gray-300 rounded-full shadow-sm text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-700"
+                  onClick={() => lensLogin()}
+                >
+                  Login
+                </button>
+              </div>
+            </div>
+          )}
+          {profile && (
             <div>
               <h1 className="text-lg my-8">
                 <span className="text-2xl">2.</span> Write something memorable!
               </h1>
               <div className="my-16 space-y-12">
-                <Post account={account} />
+                <Post profile={profile} />
 
                 <h1 className="text-lg my-8">
                   <span className="text-2xl">3.</span>{" "}
