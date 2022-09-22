@@ -9,13 +9,7 @@ export default function Post({ profile }) {
 
   console.log("PROFILE from post", profile);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-
-    if (!profile) {
-      console.log("No profile detected...");
-    }
-
+  async function createCID() {
     const body = {
       version: "2.0.0",
       metadata_id: uuidv4(),
@@ -47,16 +41,21 @@ export default function Post({ profile }) {
       if (response.status !== 200) {
         alert("Ooops! Something went wrong. Please refresh and try again.");
       } else {
-        console.log("Form successfully submitted!", response);
         let responseJSON = await response.json();
-        console.log("Response JSON e");
         const contentURI = `https://infura-ipfs.io/ipfs/${responseJSON.cid}`;
-        console.log("contentURI", contentURI);
-        console.log("Response JSON", responseJSON);
-        console.log("profile", profile.id);
+        return contentURI;
       }
     } catch (err) {
       console.log("Error while uploading to ipfs", err);
+    }
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const response = await createCID();
+    console.log("Create CID", response);
+    if (!profile) {
+      console.log("No profile detected...");
     }
   }
 
