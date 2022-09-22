@@ -6,6 +6,7 @@ import HeroSection from "../components/HeroSection";
 import Spinner from "../components/Spinner";
 import Seo from "../utils/Seo";
 import Post from "../components/Post";
+import Comment from "../components/Comment";
 import { apolloClient } from "../apollo-client";
 
 export default function Home() {
@@ -80,10 +81,10 @@ export default function Home() {
           {profile && (
             <div>
               <h1 className="text-lg my-8">
-                <span className="text-2xl">2.</span> Write something memorable!
+                <span className="text-2xl">2.</span> Write memorable comment!
               </h1>
               <div className="my-16 space-y-12">
-                <Post profile={profile} />
+                <Comment profile={profile} />
 
                 <h1 className="text-lg my-8">
                   <span className="text-2xl">3.</span>{" "}

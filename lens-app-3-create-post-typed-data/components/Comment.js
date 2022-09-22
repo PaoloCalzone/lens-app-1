@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { ethers } from "ethers";
-import { LENS_HUB_CONTRACT_ADDRESS } from "../api";
+import { v4 as uuidv4 } from "uuid";
+import { createCommentTypedData } from "../api/create-comment-typed-data";
 import LENSHUB from "../abi/lenshub.json";
-import { apolloClient } from "../apollo-client";
+import { LENS_HUB_CONTRACT_ADDRESS } from "../api";
+import omitDeep from "omit-deep";
 
 export default function Post({ profile }) {
   const [post, setPost] = useState("");
@@ -14,8 +15,8 @@ export default function Post({ profile }) {
     const body = {
       version: "2.0.0",
       metadata_id: uuidv4(),
-      description: "TEXT9",
-      content: "TEXT9",
+      description: "Comment",
+      content: "Comment",
       locale: "en",
       mainContentFocus: "TEXT_ONLY",
       external_url: null,
@@ -54,41 +55,64 @@ export default function Post({ profile }) {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
     if (!profile) {
       console.log("No profile detected...");
       return;
     }
-
     const contentUri = await createCID();
     console.log("Create CID", contentUri);
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    console.log("Signer", signer);
+    const createCommentRequest = {
+      profileId: "0x3f7d",
+      publicationId: "0x3f7d-0x05",
+      contentURI: contentUri,
+      collectModule: {
+        revertCollectModule: true,
+      },
+      referenceModule: {
+        followerOnlyReferenceModule: false,
+      },
+    };
+
+    const result = await createCommentTypedData(createCommentRequest);
+    const typedData = result.data.createCommentTypedData.typedData;
+    console.log("typedData", typedData);
+    const signature = await signer._signTypedData(
+      omitDeep(typedData.domain, "__typename"),
+      omitDeep(typedData.types, "__typename"),
+      omitDeep(typedData.value, "__typename")
+    );
+
+    console.log("Signature", signature);
+    const { v, r, s } = await ethers.utils.splitSignature(signature);
 
     const contract = new ethers.Contract(
       LENS_HUB_CONTRACT_ADDRESS,
       LENSHUB,
       signer
     );
-    try {
-      const postData = {
-        profileId: profile.id,
-        contentURI: contentUri,
-        collectModule: "0x0BE6bD7092ee83D44a6eC1D949626FeE48caB30c",
-        collectModuleInitData: ethers.utils.defaultAbiCoder.encode(
-          ["bool"],
-          [true]
-        ),
-        referenceModule: "0x0000000000000000000000000000000000000000",
-        referenceModuleInitData: [],
-      };
-      const tx = await contract.post(postData);
-      await tx.wait();
-      console.log("Transaction", tx);
-    } catch (err) {
-      console.log("error: ", err);
-    }
+
+    const tx = await contract.commentWithSig({
+      profileId: typedData.value.profileId,
+      contentURI: typedData.value.contentURI,
+      profileIdPointed: typedData.value.profileIdPointed,
+      pubIdPointed: typedData.value.pubIdPointed,
+      referenceModuleData: typedData.value.referenceModuleData,
+      collectModule: typedData.value.collectModule,
+      collectModuleInitData: typedData.value.collectModuleInitData,
+      referenceModule: typedData.value.referenceModule,
+      referenceModuleInitData: typedData.value.referenceModuleInitData,
+      sig: {
+        v,
+        r,
+        s,
+        deadline: typedData.value.deadline,
+      },
+    });
+    console.log(tx.hash);
   }
 
   return (
@@ -122,14 +146,14 @@ export default function Post({ profile }) {
                   /* disabled={loading} */
                 >
                   {/*  {loading ? <Spinner /> : ""} */}
-                  <span className="flex-1">Send </span>
+                  <span className="flex-1">Comment </span>
                 </button>
               </div>
             </div>
           </div>
         </form>
       ) : (
-        <div>Please login to post</div>
+        <div>Please login to comment</div>
       )}
     </div>
   );
