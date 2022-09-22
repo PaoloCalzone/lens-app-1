@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { gql, useMutation } from "@apollo/client";
-import { CREATE_POST_TYPED_DATA } from "../api";
+import { ethers } from "ethers";
+import { LENS_HUB_CONTRACT_ADDRESS } from "../api";
+import LENSHUB from "../abi/lenshub.json";
 import { apolloClient } from "../apollo-client";
 
 export default function Post({ profile }) {
@@ -52,10 +53,41 @@ export default function Post({ profile }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const response = await createCID();
-    console.log("Create CID", response);
+
     if (!profile) {
       console.log("No profile detected...");
+      return;
+    }
+
+    const contentUri = await createCID();
+    console.log("Create CID", contentUri);
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    console.log("Signer", signer);
+
+    const contract = new ethers.Contract(
+      LENS_HUB_CONTRACT_ADDRESS,
+      LENSHUB,
+      signer
+    );
+    try {
+      const postData = {
+        profileId: profile.id,
+        contentURI: contentUri,
+        collectModule: "0x0BE6bD7092ee83D44a6eC1D949626FeE48caB30c",
+        collectModuleInitData: ethers.utils.defaultAbiCoder.encode(
+          ["bool"],
+          [true]
+        ),
+        referenceModule: "0x0000000000000000000000000000000000000000",
+        referenceModuleInitData: [],
+      };
+      const tx = await contract.post(postData);
+      await tx.wait();
+      console.log("Transaction", tx);
+    } catch (err) {
+      console.log("error: ", err);
     }
   }
 
